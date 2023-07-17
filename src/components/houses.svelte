@@ -1,10 +1,10 @@
 <script>
   import { onMount, onDestroy } from "svelte";
-  import House from "./building.svelte";
+  import Building from "./building.svelte";
 
-  export let opacity = 0; // set initial opacity
+  let opacity = 0.5; // set initial opacity
 
-  let totalHouses = 50;
+  let totalHouses = 5;
   let houseWidth = 24;
   let houseHeight = 30;
   let houses = [];
@@ -14,23 +14,6 @@
   let svgHeight;
   let maxSVGWidth = 0;
   let maxSVGHeight = 0;
-
- // Define the reactive statement for houses
- // will run initially when the component is initialized and rerun whenever opacity or houses change
- $: {
-    houses = houses.map(house => {
-      return {
-        ...house,
-        windows: house.windows.map(window => {
-          return {
-            ...window,
-            opacity: opacity
-          }
-        })
-      }
-    })
-  }
-
 
   // Define positions for each window within the house
   const windowPositions = [
@@ -42,15 +25,16 @@
   // calculate how many houses can fit horizontally
   const updateColumns = () => {
     // Update the number of columns based on window's width
-    columns = Math.floor(window.innerWidth / (houseWidth + gap));
+    let width = Math.min(window.innerWidth, 900);
+    columns = Math.floor(width / (houseWidth + gap));
     rows = Math.ceil(Number(totalHouses) / Number(columns));
     svgHeight = Number(rows) * Number(houseHeight + gap);
     maxSVGWidth = columns * (houseWidth + gap);
     maxSVGHeight = rows * (houseHeight + gap);
 
-    console.log("Rows: ", rows);
-    console.log("SVG height: ", svgHeight);
-    console.log("houses array: ", houses);
+    // console.log("Rows: ", rows);
+    // console.log("SVG height: ", svgHeight);
+    // console.log("houses array: ", houses);
     updateHouses();
   };
 
@@ -65,51 +49,61 @@
           return;
         }
 
-        // windows and delay
-        let houseWindows = windowPositions.map((window) => {
+        let houseWindows = windowPositions.map((window, index) => {
           return {
             ...window,
-            opacity: opacity,
+            opacity: opacity, // set initial opacity to 0
             updateOpacity: function (newOpacity) {
               this.opacity = newOpacity;
             },
           };
         });
 
-        // Push each house with its position and windows state
+        // push each house with position and
         houses.push({
           x: j * (houseWidth + gap) + gap / 2,
           y: i * (houseHeight + gap) + gap / 2,
           windows: houseWindows,
-          updateWindows: function () {
-            this.windows.forEach((window) => window.updateOpacity());
+          updateWindows: function (newOpacity) {
+            this.windows = this.windows.map((window) => {
+              return {
+                ...window,
+                opacity: newOpacity,
+              };
+            });
+            // Create a new houses array to trigger re-render
+            this.windows = this.windows.map((window) => {
+              return {
+                ...window,
+                opacity: newOpacity,
+              };
+            });
           },
         });
         count++;
       }
     }
-    // Random delay
-    houses.forEach((house, i) => {
-      setTimeout(() => {
-        house.updateWindows();
-      }, Math.random() * 2000); // delay up to 2 seconds
-    });
   };
 
-  const updateOpacity = (newOpacity) => {
-    houses.forEach((house) => {
-      house.windows.forEach((window) => {
-        window.updateOpacity(newOpacity);
-      });
-    });
-  };
+  export function updateOpacity(newOpacity) {
+  houses.forEach((house, i) => {
+    setTimeout(() => {
+      house.updateWindows(newOpacity);
+      houses = [...houses]; // force Svelte to detect a change in the `houses` array
+    }, i * 200); 
+  });
+  console.log("run updateOpacity: ", newOpacity);
+}
+
 
   // add a resize event listener to the window
+  // Runs after the component is added to the DOM
   onMount(() => {
     window.addEventListener("resize", updateColumns);
     updateColumns();
   });
   // remove a resize event listener to the window
+  // runs just before the component is removed from the DOM.
   onDestroy(() => {
     window.removeEventListener("resize", updateColumns);
   });
@@ -125,7 +119,7 @@
 
   {#each houses as house (house.x + "-" + house.y)}
     <g transform={`translate(${house.x}, ${house.y})`}>
-      <House windows={house.windows} />
+      <Building windows={house.windows} />
     </g>
   {/each}
 </svg>
