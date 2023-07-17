@@ -3,6 +3,7 @@
   import Houses from "./components/houses.svelte";
 
   let speed = "0.5";
+  let opacity = 0.5;
 </script>
 
 <main>
@@ -10,25 +11,33 @@
     På det høyeste blir GE Haliade-X mer enn dobbelt så høy som Oslo Plaza
   </h1>
 
-  <div class="windmillcontainer">
+  <div class="centercontainer">
     <Windmill_Plaza {speed} />
-   
-        <button
+  </div>
+
+  <h2>
+    Vindmøllens årlige produksjon er estimert til 60-63 GWh, nok til å dekke forbruket til 3750-4000 husholdninger
+  </h2>
+
+  <div class="centercontainer">
+    <button
       on:click={() => {
         speed = (parseFloat(speed) + 1).toFixed(1);
+        opacity = 1;
         console.log("Speed after button click: ", speed);
-      }}>More!</button
+      }}>Start</button
     >
-
     <button
       on:click={() => {
         speed = 0;
+        opacity = 0;
         console.log("Speed after button click: ", speed);
-      }}>Off</button
+      }}>Stop</button
     >
-   
   </div>
-  <Houses />
+  <div class="buildingcontainer">
+    <Houses {opacity} />
+  </div>
 </main>
 
 <style>
@@ -44,14 +53,24 @@
     text-align: center;
   }
 
-  .windmillcontainer {
-    width: 100%;
-    max-height: 70vh;
-    padding-bottom: 75%; /* adjust to match SVG's aspect ratio */
-    position: relative;
+  h2 {
+    margin: 20px 20px 20px 20px;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: white;
+    text-align: center;
+  }
+
+  .centercontainer {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    margin: 25px 0px 25px 0px;
+  }
+
+  .buildingcontainer {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0px 25px 0px;
+    background-color: #0078B8;
   }
 </style>

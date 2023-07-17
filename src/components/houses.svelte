@@ -1,23 +1,56 @@
 <script>
   import { onMount, onDestroy } from "svelte";
+  import House from "./building.svelte";
+
+  export let opacity = 0; // set initial opacity
 
   let totalHouses = 50;
   let houseWidth = 24;
   let houseHeight = 30;
-  let gap = 20;
   let houses = [];
+  let gap = 15;
   let columns;
   let rows;
   let svgHeight;
+  let maxSVGWidth = 0;
+  let maxSVGHeight = 0;
+
+ // Define the reactive statement for houses
+ // will run initially when the component is initialized and rerun whenever opacity or houses change
+ $: {
+    houses = houses.map(house => {
+      return {
+        ...house,
+        windows: house.windows.map(window => {
+          return {
+            ...window,
+            opacity: opacity
+          }
+        })
+      }
+    })
+  }
+
+
+  // Define positions for each window within the house
+  const windowPositions = [
+    { x: 10, y: 8, width: 4, height: 4 },
+    { x: 4, y: 18, width: 5, height: 6 },
+    { x: 15, y: 18, width: 5, height: 6 },
+  ];
 
   // calculate how many houses can fit horizontally
   const updateColumns = () => {
     // Update the number of columns based on window's width
     columns = Math.floor(window.innerWidth / (houseWidth + gap));
     rows = Math.ceil(Number(totalHouses) / Number(columns));
-    svgHeight = Number(rows) * Number(houseHeight+gap);
+    svgHeight = Number(rows) * Number(houseHeight + gap);
+    maxSVGWidth = columns * (houseWidth + gap);
+    maxSVGHeight = rows * (houseHeight + gap);
+
     console.log("Rows: ", rows);
     console.log("SVG height: ", svgHeight);
+    console.log("houses array: ", houses);
     updateHouses();
   };
 
@@ -31,16 +64,47 @@
         if (count >= totalHouses) {
           return;
         }
+
+        // windows and delay
+        let houseWindows = windowPositions.map((window) => {
+          return {
+            ...window,
+            opacity: opacity,
+            updateOpacity: function (newOpacity) {
+              this.opacity = newOpacity;
+            },
+          };
+        });
+
+        // Push each house with its position and windows state
         houses.push({
           x: j * (houseWidth + gap) + gap / 2,
           y: i * (houseHeight + gap) + gap / 2,
+          windows: houseWindows,
+          updateWindows: function () {
+            this.windows.forEach((window) => window.updateOpacity());
+          },
         });
         count++;
       }
     }
+    // Random delay
+    houses.forEach((house, i) => {
+      setTimeout(() => {
+        house.updateWindows();
+      }, Math.random() * 2000); // delay up to 2 seconds
+    });
   };
 
-  // add and a resize event listener to the window
+  const updateOpacity = (newOpacity) => {
+    houses.forEach((house) => {
+      house.windows.forEach((window) => {
+        window.updateOpacity(newOpacity);
+      });
+    });
+  };
+
+  // add a resize event listener to the window
   onMount(() => {
     window.addEventListener("resize", updateColumns);
     updateColumns();
@@ -53,33 +117,21 @@
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
+  id="housessvg"
   style={`width: 100%; height: ${svgHeight}px;`}
+  viewBox="0 0 {maxSVGWidth} {maxSVGHeight}"
 >
-  <rect width="100%" height="100%" fill="#ffffff" />
+  <!-- <rect width="100%" height="100%" fill="#006499" /> -->
 
   {#each houses as house (house.x + "-" + house.y)}
-    <use
-      href="#house"
-      x={house.x}
-      y={house.y}
-      width={houseWidth}
-      height={houseHeight}
-    />
-  {/each}
-
-  <symbol id="house" viewBox="0 0 24 30">
-    <!-- your house SVG here -->
-    <g class="hus export">
-      <path
-        fill="#003550"
-        d="m4 8.215-4 4.107V30h24V12.322L12 0 6.5 5.648V2H4v6.215Z"
-        class="hus"
-      />
-      <g class="vindu">
-        <path fill="#FFE973" d="M9.987 7h4v7h-4z" class="Rectangle 18" />
-        <path fill="#FFE973" d="M14 18h6v7h-6z" class="Rectangle 19" />
-        <path fill="#FFE973" d="M4 18h6v7H4z" class="Rectangle 20" />
-      </g>
+    <g transform={`translate(${house.x}, ${house.y})`}>
+      <House windows={house.windows} />
     </g>
-  </symbol>
+  {/each}
 </svg>
+
+<style>
+  #housessvg {
+    max-width: 900px;
+  }
+</style>

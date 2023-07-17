@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" fill="none" viewBox="0 0 24 30">
   <g class="hus export">
-    <path fill="#003550" d="m4 8.215-4 4.107V30h24V12.322L12 0 6.5 5.648V2H4v6.215Z" class="hus"/>
+    <path fill="#003C5A" d="m4 8.215-4 4.107V30h24V12.322L12 0 6.5 5.648V2H4v6.215Z" class="hus"/>
     <g class="vindu">
-      <path fill="#FFE973" d="M9.987 7h4v7h-4z" class="Rectangle 18"/>
-      <path fill="#FFE973" d="M14 18h6v7h-6z" class="Rectangle 19"/>
-      <path fill="#FFE973" d="M4 18h6v7H4z" class="Rectangle 20"/>
+      <path fill="#FFE973" d="M10 7.945h4v4.11h-4z" class="vindu3"/>
+      <path fill="#FFE973" d="M15 18h5v6h-5z" class="vindu2"/>
+      <path fill="#FFE973" d="M4 18h5v6H4z" class="vindu1"/>
     </g>
   </g>
 </svg>

@@ -26,7 +26,7 @@
   }
 </script>
 
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 454 357">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 454 357" id="windmillsvg">
   <title lang="en" class="s-XsEmFtvddWTw"
     >Oslo Plaza and the Haliade-X windmill placed next to each other.</title
   >
@@ -112,4 +112,10 @@
   .blades {
     transform-origin: 316px 135px;
   }
+
+  #windmillsvg {
+    max-width: 600px;  /* adjust this value as needed */
+    max-height: 500px; /* adjust this value as needed */
+  }
+
 </style>
