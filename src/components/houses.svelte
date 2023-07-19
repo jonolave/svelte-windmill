@@ -2,9 +2,9 @@
   import { onMount, onDestroy } from "svelte";
   import Building from "./Building.svelte";
 
-  let opacity = 0.5; // set initial opacity
+  let opacity = 0; // set initial opacity
 
-  let totalHouses = 5;
+  let totalHouses = 40;
   let houseWidth = 24;
   let houseHeight = 30;
   let houses = [];
@@ -61,8 +61,8 @@
 
         // push each house with position and
         houses.push({
-          x: j * (houseWidth + gap) + gap / 2,
-          y: i * (houseHeight + gap) + gap / 2,
+          x: j * (houseWidth + gap),
+          y: i * (houseHeight + gap),
           windows: houseWindows,
           updateWindows: function (newOpacity) {
             this.windows = this.windows.map((window) => {
@@ -90,9 +90,9 @@
     setTimeout(() => {
       house.updateWindows(newOpacity);
       houses = [...houses]; // force Svelte to detect a change in the `houses` array
-    }, i * 200); 
+    }, (i * 40)+400); // speed of timeout
   });
-  console.log("run updateOpacity: ", newOpacity);
+  // console.log("run updateOpacity: ", newOpacity);
 }
 
 

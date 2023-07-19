@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte";
 
-  // get speed from main app
-  export let speed;
+  // Import speedStore (the gradually changing speed)
+  import { speedStore } from '../stores.js';
 
   // windmill animation
   let svgElement;
@@ -17,16 +17,24 @@
         easing: "linear",
       }
     );
-    animation.playbackRate = speed;
 
+    const unsubscribe = speedStore.subscribe((value) => {
+      if (animation) {
+        animation.playbackRate = value;
+      }
+    });
+
+    // This function will be called when the component is destroyed
+    return unsubscribe;
   });
-
-  $: if (animation) {
-    animation.playbackRate = speed;
-  }
 </script>
 
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 454 357" id="windmillsvg">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 454 357"
+  id="windmillsvg"
+>
   <title lang="en" class="s-XsEmFtvddWTw"
     >Oslo Plaza and the Haliade-X windmill placed next to each other.</title
   >
@@ -114,8 +122,7 @@
   }
 
   #windmillsvg {
-    max-width: 600px;  /* adjust this value as needed */
-    max-height: 500px; /* adjust this value as needed */
+    max-width: 600px; /* adjust this value as needed */
+    max-height: 600px; /* adjust this value as needed */
   }
-
 </style>

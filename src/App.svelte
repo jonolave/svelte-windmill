@@ -1,4 +1,9 @@
 <script>
+  // Import packages
+  import { tweened } from "svelte/motion";
+  import { cubicOut } from "svelte/easing";
+
+  // Import components
   import Windmill_Plaza from "./components/Windmill_plaza.svelte";
   import Houses from "./components/Houses.svelte";
 
@@ -8,51 +13,66 @@
     houses.updateOpacity(opacity);
   }
 
+  // Handle speed of windmill, and tweening
+  let speed = 0; // start from 0. Start sped is handled in stores.js
+  import { speedStore } from "./stores.js";
 
-  let speed = "0.5";
-  let opacity = 0.5;
+  // Functions to change speed of windmill
+  function increaseSpeed() {
+    speed = 1;
+    speedStore.set(speed); // animate speed increasing to 1
+    console.log("new speedstore: ", speedStore)
+  }
+
+  function decreaseSpeed() {
+    speed = 0;
+    speedStore.set(speed); // animate speed decreasing to 0
+    console.log("new speedstore: ", speedStore)
+
+  }
 </script>
 
 <main>
-  <div class="centercontainer">  <h1>
-    På det høyeste blir GE Haliade-X mer enn dobbelt så høy som Oslo Plaza
-  </h1>
-</div>
-
   <div class="centercontainer">
-    <Windmill_Plaza {speed} />
+    <h1>
+      På det høyeste blir GE Haliade-X mer enn dobbelt så høy som Oslo Plaza
+    </h1>
   </div>
 
-  <div class="centercontainer"> <h2>
-    Vindmøllens årlige produksjon er estimert til 60-63 GWh, nok til å dekke
-    forbruket til 3750-4000 husholdninger
-  </h2>
-</div>
- 
+  <div class="centercontainer">
+    <Windmill_Plaza />
+  </div>
+
+  <div class="centercontainer">
+    <h2>
+      Vindmøllens årlige produksjon er estimert til 60-63 GWh, nok til å dekke
+      forbruket til 3750-4000 husholdninger
+    </h2>
+  </div>
+
   <div class="centercontainer">
     <button
       on:click={() => {
-        speed = (parseFloat(speed) + 1).toFixed(1);
+        increaseSpeed();
         triggerUpdateOpacity(1);
-        // console.log("Speed after button click: ", speed);
       }}>Start</button
     >
     <button
       on:click={() => {
-        speed = 0;
-        triggerUpdateOpacity(0)
-        // console.log("Speed after button click: ", speed);
+        decreaseSpeed();
+        triggerUpdateOpacity(0);
       }}>Stop</button
     >
   </div>
   <div class="buildingcontainer">
-    <Houses bind:this={houses}  />
+    <Houses bind:this={houses} />
   </div>
 </main>
 
 <style>
   :global(body) {
     background-color: #0089d1;
+    padding: 0px;
   }
 
   h1,
@@ -81,7 +101,8 @@
   .buildingcontainer {
     display: flex;
     justify-content: center;
-    margin: 25px 0px 25px 0px;
+    margin: 0px;
+    padding: 25px;
     background-color: #0078b8;
   }
 </style>
