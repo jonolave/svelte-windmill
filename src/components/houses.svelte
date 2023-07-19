@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy } from "svelte";
-  import Building from "./building.svelte";
+  import Building from "./Building.svelte";
 
   let opacity = 0.5; // set initial opacity
 

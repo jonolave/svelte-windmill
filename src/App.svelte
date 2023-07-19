@@ -1,6 +1,6 @@
 <script>
-  import Windmill_Plaza from "./components/windmill_plaza.svelte";
-  import Houses from "./components/houses.svelte";
+  import Windmill_Plaza from "./components/Windmill_plaza.svelte";
+  import Houses from "./components/Houses.svelte";
 
   // To trigger light changing function in Houses component
   let houses;

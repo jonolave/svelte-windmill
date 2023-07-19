@@ -6,7 +6,7 @@
 
   // this statement will run every time the 'windows' variable changes
   $: {
-    console.log("Windows:", windows);
+    console.log("Windows updated:", windows);
   }
 </script>
 
