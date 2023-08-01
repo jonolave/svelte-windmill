@@ -4,7 +4,7 @@
 
   let opacity = 0; // set initial opacity
 
-  let totalHouses = 40;
+  let totalHouses = 400;
   let houseWidth = 24;
   let houseHeight = 30;
   let houses = [];
